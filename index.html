@@ -1,0 +1,61 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script type="text/javascript" src="dymatrix.js" charset="utf-8"></script>
+    <script>
+        window.m1 = dymatrix.init('container', {
+            groups: [
+                {
+                    id: 'web',
+                    name: 'Web',
+                    rows: [
+                        { id: 'download_ofb', name: 'Download file from OFB' },
+                        { id: 'share_link_ofb', name: 'Create shared link from OFB' },
+                        { id: 'download_link', name: 'Download file from shared link' },
+                        { id: 'view_link', name: 'View file from shared link' },
+                        { id: 'wopi', name: 'View/edit with Office online' }
+                    ]
+                },
+                {
+                    id: 'mobile',
+                    name: 'Mobile',
+                    rows: [
+                        { id: 'share_link', name: 'Create shared link' },
+                        { id: 'view', name: 'View' },
+                        { id: 'open', name: 'Open In' }
+                    ]
+                },
+                {
+                    id: 'desktop',
+                    name: 'Desktop',
+                    rows: [
+                        { id: 'sync', name: 'Sync down' }
+                    ]
+                },
+                {
+                    id: 'outlook',
+                    name: 'Outlook',
+                    rows: [
+                        { id: 'share_link', name: 'Create shared link' }
+                    ]
+                }
+            ],
+            columns: [
+                { id: 'unclassified', name: 'Unclassified' },
+                { id: 'not_sensitive', name: 'Not-sensitive' },
+                { id: 'sensitive', name: 'Sensitive' }
+            ],
+            options: [
+                { id: 'allow', name: 'Allow' },
+                { id: 'warn', name: 'Warn' },
+                { id: 'disallow', name: 'Disallow' }
+            ]
+        });
+    </script>
+    <div class="container"></div>
+    <hr />
+    <div class="container"></div>
+</body>
+</html>
