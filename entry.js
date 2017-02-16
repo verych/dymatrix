@@ -21,7 +21,7 @@ $.fn.show = function (speed, oldCallback) {
     });
 }
 
-module.exports.init = function (selector, data, callback) {
+module.exports.init = function (selector, data, settings, callback) {
     var mc = require('./matrix.js');
     $(function () {
         let containers = $(`.${selector}`);
@@ -30,7 +30,7 @@ module.exports.init = function (selector, data, callback) {
         for (let i = 0; i < containers.length; i++)
         {
             let c = containers[i];
-            let m = mc.create(data);
+            let m = mc.create(data, settings);
             $(c).append(m.dom);
             items.push(m);
         }

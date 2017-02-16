@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <style>
-        .controls1 {width: 600px; float: left;}
+        .controls {width: 600px; float: left;}
         .results {width: 600px; float: left;}
     </style>
 </head>
@@ -62,9 +62,9 @@
                 }
             ],
             columns: [
-                { id: 'unclassified', name: 'Unclassified' },
-                { id: 'not_sensitive', name: 'Not-sensitive' },
-                { id: 'sensitive', name: 'Sensitive' }
+                { id: 'guest', name: 'Guest' },
+                { id: 'user', name: 'Registered' },
+                { id: 'admin', name: 'Admin' }
             ],
             options: [
                 { id: 'allow', name: 'Allow' },
@@ -74,44 +74,45 @@
             values: {
                 web: {
                     download: {
-                        unclassified: 'allow',
-                        not_sensitive: 'warn',
-                        sensitive: 'disallow',
+                        guest: 'disallow',
+                        user: 'warn',
+                        admin: 'disallow',
                     },
                     share_link: {
-                        unclassified: 'allow',
-                        not_sensitive: 'allow',
-                        sensitive: 'allow',
+                        guest: 'disallow',
+                        user: 'allow',
+                        admin: 'allow',
                     },
                     download_link: {
-                        unclassified: 'warn',
-                        not_sensitive: 'warn',
-                        sensitive: 'warn',
+                        guest: 'disallow',
+                        user: 'warn',
+                        admin: 'warn',
                     },
                     view_link: {
-                        unclassified: 'disallow',
-                        not_sensitive: 'disallow',
-                        sensitive: 'disallow',
+                        guest: 'disallow',
+                        user: 'disallow',
+                        admin: 'disallow',
                     },
                     wopi: {
-                        unclassified: 'allow',
-                        not_sensitive: 'warn',
-                        sensitive: 'allow',
+                        guest: 'disallow',
+                        user: 'warn',
+                        admin: 'allow',
                     },
                 }
             }
-        }, onMatrixCreated);
+        }, 
+        {
+            headerPopup: false,
+            cellPopup: true
+        },
+        onMatrixCreated);
     </script>
     <div class="controls">
-        <div class="container"></div>
-        <hr />
         <div class="container"></div>
     </div>
     <div class="results">
         <strong>Result #1:</strong>
         <pre><div id="r0">...</div></pre>
-        <strong>Result #2:</strong>
-        <pre><div id="r1">...</div></pre>
     </div>
 </body>
 </html>

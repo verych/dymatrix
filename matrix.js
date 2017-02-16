@@ -1,6 +1,18 @@
 ﻿class Matrix {
-    constructor(data)
+    constructor(data, settings)
     {
+        //default settings
+        this.settings = {
+            headerPopup: false,
+            cellPopup: true,
+            hightlightChanged: true,
+        };
+        if (settings) {
+            this.settings.headerPopup = settings.headerPopup || this.settings.headerPopup;
+            this.settings.cellPopup = settings.cellPopup || this.settings.cellPopup;
+            this.settings.hightlightChanged = settings.hightlightChanged || this.settings.hightlightChanged;
+        }
+
         this.originalData = data;
         this.data = this.prepareData(data);
         this.dom = this.render();
@@ -30,6 +42,24 @@
     }
 
     render() {
+        //helper functions
+        function getPopupContents(self, groupId, rowId, columnId) {
+            let popupContents = $('<table class="popup-contents noselect"></table>');
+            for (let m = 0; m < self.data.options.length; m++) {
+                let isLastPopupLine = m == self.data.options.length - 1;
+                let popupItemIcon = $(`<td class="popup-icon"><div class="icon dm-${self.data.options[m].id}"></div></td>`);
+                let popupItemCaption = $(`<td class="popup-caption"><div>${self.data.options[m].name}</div></td>`);
+                let popupItem = $(`<tr dm-option="${self.data.options[m].id}" class="popup-line ${isLastPopupLine ? "last" : "not-last"}"></tr>`);
+                popupItem.append(popupItemIcon);
+                popupItem.append(popupItemCaption);
+                popupContents.append(popupItem);
+                //click item event
+                popupItem.click(function (e) {
+                    self.clickPopupItem(groupId, rowId, columnId, self.data.options[m].id);
+                });
+            }
+            return popupContents;
+        }
         //main container
         this.dom = $(`<div class="dm size-${this.data.columns.length}"></div>`);
         //groups
@@ -56,15 +86,30 @@
             actions.append(rowActionSkip);
             //row header columns
             for (let l = 0; l < this.data.columns.length; l++) {
-                let column = $(`<div dm-column="${this.data.columns[l].id}" class="column"></div>`);
+                let column = $(`<div dm-column="${this.data.columns[l].id}" class="column tooltip"></div>`);
                 actions.append(column);
                 //bulk action button
                 let actionButton = $(`<div class="action click bulk icon empty"></div>`);
                 column.append(actionButton);
+                //popup
+                if (this.settings.headerPopup) {
+                    let popup = $('<div class="tooltip-text"></div>');
+                    actionButton.append(popup);
+                    //popup contents
+                    let popupContents = getPopupContents(this, this.data.groups[i].id, null, this.data.columns[l].id);
+                    popup.append(popupContents);
+                }
                 //click bulk value event
                 let self = this;
                 actionButton.click(function (e) {
-                    self.bulkClick(actionButton, self.data.groups[i].id, self.data.columns[l].id);
+                    let target = $(e.target);
+                    if (target.hasClass('action') || target.hasClass('tooltip-text')) {
+                        self.bulkClick(actionButton, self.data.groups[i].id, self.data.columns[l].id);
+                    }
+                });
+                //hover event
+                column.hover(function () {
+                    self.columnHover(column);
                 });
             }
             //rows
@@ -83,29 +128,16 @@
                     let icon = $(`<div dm-init="${val}" dm-current="${val}" class="icon dm-${val} value click"></div>`);
                     column.append(icon);
                     //popup
-                    let popup = $('<div class="tooltip-text"></div>');
-                    icon.append(popup);
-                    //popup contents
-                    let popupContents = $('<table class="popup-contents noselect"></table>');
-                    for (let m = 0; m < this.data.options.length; m++) {
-                        let isLastPopupLine = m == this.data.options.length - 1;
-                        let popupItemIcon = $(`<td class="popup-icon"><div class="icon dm-${this.data.options[m].id}"></div></td>`);
-                        let popupItemCaption = $(`<td class="popup-caption"><div>${this.data.options[m].name}</div></td>`);
-                        let popupItem = $(`<tr dm-option="${this.data.options[m].id}" class="popup-line ${isLastPopupLine ? "last" : "not-last"}"></tr>`);
-                        popupItem.append(popupItemIcon);
-                        popupItem.append(popupItemCaption);
-                        popupContents.append(popupItem);
-                        //click item event
-                        let self = this;
-                        popupItem.click(function (e) {
-                            self.clickPopupItem(self.data.groups[i].id, self.data.groups[i].rows[j].id, self.data.columns[k].id, self.data.options[m].id);
-                        });
+                    if (this.settings.cellPopup) {
+                        let popup = $('<div class="tooltip-text"></div>');
+                        icon.append(popup);
+                        //popup contents
+                        let popupContents = getPopupContents(this, this.data.groups[i].id, this.data.groups[i].rows[j].id, this.data.columns[k].id);
+                        popup.append(popupContents);
                     }
-                    popup.append(popupContents);
                     //click value event
                     let self = this;
                     column.find('.value').click(function (e) {
-                        console.log(e);
                         let target = $(e.target);
                         if (target.hasClass('value') || target.hasClass('tooltip-text')) {
                             self.valueClick(self.data.groups[i].id, self.data.groups[i].rows[j].id, self.data.columns[k].id);
@@ -128,7 +160,7 @@
         let border = parseInt(popup.css('borderLeftWidth'));
         let cornerBorder = parseInt(window.getComputedStyle(popup[0], ':after')['border-left-width']);
         let x = cell.width() / 2 - popup.width() / 2 - border;
-        let y = cell.height() + cornerBorder;
+        let y = cell.height() + cornerBorder - 10;
         popup.css({ top: y, left: x });
         //actions
         this.updatePopup(cell);
@@ -137,22 +169,27 @@
     updatePopup(cell) {
         //debugger;
         let actualValue = cell.find('.value').attr('dm-current');
+        let actualBulkValue = cell.find('.action').attr('dm-bulk');
         cell.find('.popup-line').removeClass('active');
-        let selector = `[dm-option="${actualValue}"]`;
+        let selector = `[dm-option="${actualValue ? actualValue : actualBulkValue}"]`;
         cell.find(selector).addClass("active");
     }
 
-    bulkClick(cell, groupId, columnId) {
+    bulkClick(cell, groupId, columnId, forcedValue) {
+        let newValue = forcedValue;
         if (process.env.NODE_ENV == 'development') {
             console.log('bulk', groupId, columnId, cell);
         }
-        let currentValue = cell.prop('dm-bulk');
-        let newValue = this.next(currentValue);
-        cell.prop('dm-bulk', newValue);
+        if (!forcedValue) {
+            let currentValue = cell.attr('dm-bulk');
+            newValue = this.next(currentValue);
+        }
+        cell.attr('dm-bulk', newValue);
         this.updateBulk(cell, groupId, columnId);
         //update values
         this.setBulkValues(groupId, columnId, newValue);
         this.updateBulkValues(groupId, columnId, newValue);
+        this.updatePopup(cell.parent());
         //callback
         this.exportData();
     }
@@ -187,11 +224,11 @@
 
     updateBulk(cell, groupId, columnId) {
         this.clear(cell);
-        if (cell.prop('dm-bulk') == 'empty') {
+        if (cell.attr('dm-bulk') == 'empty') {
             cell.addClass(`empty`);
         }
         else {
-            cell.addClass(`dm-${cell.prop('dm-bulk')}`);
+            cell.addClass(`dm-${cell.attr('dm-bulk')}`);
         }
     }
 
@@ -221,7 +258,13 @@
         if (process.env.NODE_ENV == 'development') {
             console.log('popup click', arguments);
         }
-        this.valueClick(groupId, rowId, columnId, newValue);
+        if (rowId != null) {
+            this.valueClick(groupId, rowId, columnId, newValue);
+        }
+        else {
+            let cell = this.getBulkCell(groupId, columnId)
+            this.bulkClick(cell, groupId, columnId, newValue);
+        }
     }
 
     updateBulkByValues(groupId, columnId) {
@@ -233,7 +276,7 @@
             console.log('bulk state to:', newValue);
         }
         let cell = this.getBulkCell(groupId, columnId);
-        cell.prop('dm-bulk', newValue);
+        cell.attr('dm-bulk', newValue);
         this.updateBulk(cell, groupId, columnId);
     }
 
@@ -259,7 +302,6 @@
     }
 
     updateCell(groupId, rowId, columnId) {
-        //debugger;
         let selector = `[dm-id="${groupId}"] [dm-id="${rowId}"] [dm-id="${columnId}"] .value`;
         let cell = this.dom.find(selector);
         if (process.env.NODE_ENV == 'development') {
@@ -277,9 +319,11 @@
         cell.attr('dm-current', newValue);
         if (cell.attr('dm-init') != cell.attr('dm-current')) {
             if (process.env.NODE_ENV == 'development') {
-                console.log('cell values:', cell.prop('dm-init'), cell.prop('dm-current'));
+                console.log('cell values:', cell.attr('dm-init'), cell.attr('dm-current'));
             }
-            cell.addClass('dm-changed');
+            if (this.settings.hightlightChanged) {
+                cell.addClass('dm-changed');
+            }
         }
     }
 
@@ -338,9 +382,9 @@
     }
 }
 
-module.exports.create = function (data) {
+module.exports.create = function (data, settings) {
     if(process.env.NODE_ENV == 'development') {
         console.log('development mode');
     }
-    return new Matrix(data);
+    return new Matrix(data, settings);
 }
