@@ -34,6 +34,10 @@ module.exports.init = function (selector, data, settings, callback) {
             $(c).append(m.dom);
             items.push(m);
         }
+        //if there is no selector then create one instance - this case is for tests
+        if (containers.length == 0) {
+            items.push(mc.create(data, settings));
+        }
         if (callback) {
             callback(items);
         }

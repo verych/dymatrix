@@ -27,7 +27,7 @@
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
-
+ 
 /*popup*/
 .dm .popup-contents {border-collapse:separate; border-spacing: 0px;}
 .dm .popup-line td {padding: 5px;}

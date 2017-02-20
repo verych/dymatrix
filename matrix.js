@@ -150,15 +150,24 @@
                 }
             }
         }
+        this.updateAllBulks();
         this.exportData();
-        return this.dom;
+        return this.dom; 
     }
 
-    columnHover(cell) {
+    updateAllBulks() {
+        for (let i = 0; i < this.data.groups.length; i++) {
+            for (let l = 0; l < this.data.columns.length; l++) {
+                this.updateBulkByValues(this.data.groups[i].id, this.data.columns[l].id);
+            }
+        }
+    }
+
+    columnHover(cell) { 
         //position
         let popup = cell.find('.tooltip-text');
         let border = parseInt(popup.css('borderLeftWidth'));
-        let cornerBorder = parseInt(window.getComputedStyle(popup[0], ':after')['border-left-width']);
+        let cornerBorder = parseInt(getComputedStyle(popup[0], ':after')['border-left-width']);
         let x = cell.width() / 2 - popup.width() / 2 - border;
         let y = cell.height() + cornerBorder - 10;
         popup.css({ top: y, left: x });
