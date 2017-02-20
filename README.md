@@ -1,1 +1,3 @@
-# dymatrix
+# Dynamic matrix control
+### Description
+...
