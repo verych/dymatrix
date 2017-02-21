@@ -310,9 +310,13 @@
         return result;
     }
 
-    updateCell(groupId, rowId, columnId) {
+    getCell(groupId, rowId, columnId) {
         let selector = `[dm-id="${groupId}"] [dm-id="${rowId}"] [dm-id="${columnId}"] .value`;
-        let cell = this.dom.find(selector);
+        return this.dom.find(selector);
+    }
+
+    updateCell(groupId, rowId, columnId) {
+        let cell = this.getCell(groupId, rowId, columnId);
         if (process.env.NODE_ENV == 'development') {
             console.log('old', selector, cell);
         }

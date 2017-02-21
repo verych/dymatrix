@@ -119,6 +119,12 @@ function initMatrix(callback) {
 
 //Sync tests
 function runSyncMatrixTests() {
+    testStructure();
+    testValues();
+    testBehaviour();
+}
+
+function testStructure() {
     describe("Level 1 - structure", () => {
         it('Number of created groups', () => {
             assert.lengthOf(
@@ -146,6 +152,109 @@ function runSyncMatrixTests() {
                 matrix.dom.find('.header'),
                 initData.groups.length,
                 "Not all group headers were created");
+        });
+        it('Number of created bulk actions', () => {
+            assert.lengthOf(
+                matrix.dom.find('.bulk'),
+                initData.columns.length * initData.groups.length,
+                "Not all bulk buttons were created");
+        });
+        it('Number of created value cells', () => {
+            for (let i = 0; i < initData.groups.length; i++) {
+                assert.lengthOf(
+                    matrix.dom.find(`[dm-id="${initData.groups[i].id}"] .cell`),
+                    initData.groups[i].rows.length * initData.columns.length,
+                    `Not all cells were created for group  ${initData.groups[i].id}`);
+            }
+        });
+    });
+}
+
+function testValues() {
+    describe("Level 2 - values", () => {
+        it('Initialization', () => {
+            //Matrix to data
+            for(let group of initData.groups) {
+                for(let row of group.rows) {
+                    for(let column of initData.columns) {
+                        let cellValue = matrix.get(group.id, row.id, column.id);
+                        if (!!cellValue) {
+                            assert.equal(cellValue, initData.values[group.id][row.id][column.id]);
+                        }
+                    }
+                }
+            }
+            //Data to matrixes
+            for (let group in initData.values) {
+                for (let row in initData.values[group]) {
+                    for (let column in initData.values[group][row]) {
+                        let value = initData.values[group][row][column];
+                        assert.equal(value, matrix.get(group, row, column));
+                    }
+                }
+            }
+        });
+
+        it('Bulk init state', () => {
+            for(let group of initData.groups) {
+                for(let column of initData.columns) {
+                    let bulkValue = matrix.getBulkCell(group.id, column.id).attr('dm-bulk');
+                    let bulkValueByValues = matrix.getBulkStateByValues(group.id, column.id);
+                    bulkValueByValues = bulkValueByValues ? bulkValueByValues : 'empty';
+                    assert.equal(bulkValue, bulkValueByValues, `Bulk state doesn't match values: ${group.id}, ${column.id}`);
+                }
+            }
+        });
+    });
+}
+
+function testBehaviour() {
+    describe("Level 3 - behaviour", () => {
+        it('Simple click', () => {
+            for(let group of initData.groups) {
+                for(let row of group.rows) {
+                    for(let column of initData.columns) {
+                        let cell = matrix.getCell(group.id, row.id, column.id);
+                        let oldValue = matrix.get(group.id, row.id, column.id);
+                        cell.click();
+                        let newValue = matrix.get(group.id, row.id, column.id);
+                        assert.isTrue((oldValue != newValue) && (initData.options.length > 0),
+                            `Value has not changed or incorrect options number: ${group.id}, ${row.id}, ${column.id}`);
+                    }
+                }
+            }
+        });
+
+        it('Cycle click', () => {
+            for(let group of initData.groups) {
+                for(let row of group.rows) {
+                    for(let column of initData.columns) {
+                        let cell = matrix.getCell(group.id, row.id, column.id);
+                        cell.click(); //to avoid empty init value 
+                        let oldValue = matrix.get(group.id, row.id, column.id);
+                        for (let i = 0; i < initData.options.length; i++) {
+                            cell.click();
+                        }
+                        let newValue = matrix.get(group.id, row.id, column.id);
+                        assert.equal(oldValue, newValue, `Value after clicks should be the same as before`);
+                    }
+                }
+            }
+        });
+
+        it('Bulk click', () => {
+            for(let group of initData.groups) {
+                for(let column of initData.columns) {
+                    for(let option of initData.options) {
+                        //set bulk
+                        matrix.setBulkValues(group.id, column.id, option.id);
+                        for(let row of group.rows) {
+                            let value = matrix.get(group.id, row.id, column.id);
+                            assert.equal(value, option.id, `cell value (${group.id}, ${row.id}, ${column.id}) doesn't equal bulk state ${option.id}`);
+                        }
+                    }
+                }
+            }
         });
     });
 }
