@@ -2,6 +2,7 @@
 ### Description:
 The control is a realization of mandatory access table using Javascript.
 It's absolutely standalone and it doesn't require to include additional libraries.
+![example of dynamic matrix control - dymatrix](https://verych.github.io/dymatrix/example.png)
 ### How to use:
 ```html
 <script type="text/javascript" src="bin/dymatrix.min.js"></script>
