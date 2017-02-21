@@ -1,11 +1,23 @@
 # Dynamic matrix control
-### Description
+### Description:
 The control is a realization of mandatory access table using Javascript.
 It's absolutely standalone and it doesn't require to include additional libraries.
-### How to use
+### How to use:
+```html
 <script type="text/javascript" src="bin/dymatrix.min.js"></script>
+```
 and then:
-dymatrix.init('container', data, settings, onCreatedCallback);
-### Demo page
+```javascript
+dymatrix.init(selector, data, settings, onCreatedCallback);
+```
+### Parameters:
+*selector* - jQuery selector to append rendered control into
+*data* - init data (see demo source)
+*settings* - ```{headerPopup: true|false, cellPopup: true|false}```
+*onCreatedCallback* - callback when document is loaded and control is created.
+
+### Demo page:
 https://verych.github.io/dymatrix/
 
+### Tested web-browsers:
+IE11, Edge, Firefox, Chrome.
