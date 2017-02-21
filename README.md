@@ -12,9 +12,13 @@ dymatrix.init(selector, data, settings, onCreatedCallback);
 ```
 ### Parameters:
 *selector* - jQuery selector to append rendered control into
+
 *data* - init data (see demo source)
+
 *settings* - ```{headerPopup: true|false, cellPopup: true|false}```
+
 *onCreatedCallback* - callback when document is loaded and control is created.
+
 
 ### Demo page:
 https://verych.github.io/dymatrix/
