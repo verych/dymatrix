@@ -53,6 +53,11 @@ Dynamic Matrix Tests
   12 passing (1s)
   ```
   
-  ### Used technology:
+### Used technologies:
 * node.js
 * webpack
+* babel
+* jquery
+* mocha
+* chai
+see all of them in the package file
