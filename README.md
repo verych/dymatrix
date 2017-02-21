@@ -25,7 +25,7 @@ dymatrix.init(selector, data, settings, onCreatedCallback);
 https://verych.github.io/dymatrix/
 
 ### Tested web-browsers:
-IE11, Edge, Firefox, Chrome.
+IE11, Edge, Firefox, Chrome, Safari.
 
 ### Tests coverage:
 ```
