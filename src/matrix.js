@@ -163,9 +163,13 @@
         }
     }
 
-    columnHover(cell) { 
+    columnHover(cell) {
         //position
         let popup = cell.find('.tooltip-text');
+        if (popup.length == 0) {
+            //popup is disabled by config
+            return false;
+        }
         let border = parseInt(popup.css('borderLeftWidth'));
         let cornerBorder = parseInt(getComputedStyle(popup[0], ':after')['border-left-width']);
         let x = cell.width() / 2 - popup.width() / 2 - border;
@@ -176,7 +180,6 @@
     }
 
     updatePopup(cell) {
-        //debugger;
         let actualValue = cell.find('.value').attr('dm-current');
         let actualBulkValue = cell.find('.action').attr('dm-bulk');
         cell.find('.popup-line').removeClass('active');
@@ -193,7 +196,7 @@
             let currentValue = cell.attr('dm-bulk');
             newValue = this.next(currentValue);
         }
-        cell.attr('dm-bulk', newValue);
+        cell.attr('dm-bulk', newValue); 
         this.updateBulk(cell, groupId, columnId);
         //update values
         this.setBulkValues(groupId, columnId, newValue);
@@ -203,7 +206,7 @@
         this.exportData();
     }
 
-    setBulkValues(groupId, columnId, newValue) {
+    setBulkValues(groupId, columnId, newValue) { 
         if (!this.data.values) {
             this.data.values = {};
         }
@@ -396,6 +399,7 @@
 }
 
 module.exports.create = function (data, settings) {
+    console.log(process.env.NODE_ENV);
     if(process.env.NODE_ENV == 'development') {
         console.log('development mode');
     }

@@ -1,6 +1,6 @@
 require('node-import');
 
-imports('./dymatrix.js'); // import needed file with function to global context
+imports('./bin/dymatrix.min.js'); // import needed file with function to global context
 const chai = require('chai');
 chai.should();
 const assert = require('chai').assert;
@@ -11,37 +11,37 @@ let matrixes = [];
 let initData = {
     groups: [
         {
-            id: 'web',
-            name: 'Web',
+            id: 'group1',
+            name: 'Global access',
             rows: [
-                { id: 'download', name: 'Download file from web' },
-                { id: 'share_link', name: 'Create shared link from web' },
-                { id: 'download_link', name: 'Download file from shared link' },
-                { id: 'view_link', name: 'View file from shared link' },
-                { id: 'wopi', name: 'View/edit with Office online' }
+                { id: 'r11', name: 'Access office' },
+                { id: 'r12', name: 'Access support stage' },
+                { id: 'r13', name: 'Access tech stage' },
+                { id: 'r14', name: 'Access kitchen' },
+                { id: 'r15', name: 'Access mobile department' }
             ]
         },
         {
-            id: 'mobile',
-            name: 'Mobile',
+            id: 'group2',
+            name: 'Services',
             rows: [
-                { id: 'share_link', name: 'Create shared link' },
-                { id: 'view', name: 'View' },
-                { id: 'open', name: 'Open In' }
+                { id: 'r21', name: 'Open any doors' },
+                { id: 'r22', name: 'Turning on/off lights' },
+                { id: 'r23', name: 'Open windowses' }
             ]
         },
         {
-            id: 'desktop',
-            name: 'Desktop',
+            id: 'group3',
+            name: 'Administrative',
             rows: [
-                { id: 'sync', name: 'Sync down' }
+                { id: 'r31', name: 'Admin permissions' }
             ]
         },
         {
-            id: 'outlook',
-            name: 'Outlook',
+            id: 'group4',
+            name: 'Test features',
             rows: [
-                { id: 'share_link', name: 'Create shared link' }
+                { id: 'r41', name: 'Something else...' }
             ]
         }
     ],
@@ -56,28 +56,28 @@ let initData = {
         { id: 'disallow', name: 'Disallow' }
     ],
     values: {
-        web: {
-            download: {
+        group1: {
+            r11: {
                 guest: 'disallow',
                 user: 'warn',
                 admin: 'disallow',
             },
-            share_link: {
+            r12: {
                 guest: 'disallow',
                 user: 'allow',
                 admin: 'allow',
             },
-            download_link: {
+            r13: {
                 guest: 'disallow',
                 user: 'warn',
                 admin: 'warn',
             },
-            view_link: {
+            r14: {
                 guest: 'disallow',
                 user: 'disallow',
                 admin: 'disallow',
             },
-            wopi: {
+            r15: {
                 guest: 'disallow',
                 user: 'warn',
                 admin: 'allow',
